@@ -1,0 +1,174 @@
+version: '3.8'
+
+services:
+  rasa-actions-bot1:
+    build:
+      context: ./chatbot/Module_1
+      dockerfile: Dockerfile.actions
+    ports:
+      - "5055:5055"
+    volumes:
+      - ./chatbot/Module_1/actions:/app/actions
+      - ./chatbot/Module_1/endpoints.yml:/app/endpoints.yml
+      - ./chatbot/Module_1/credentials.yml:/app/credentials.yml
+      - ./chatbot/Module_1/config.yml:/app/config.yml
+      - ./chatbot/Module_1/domain.yml:/app/domain.yml
+    networks:
+      - bot-network
+
+  rasa-bot1:
+    build:
+      context: ./chatbot/Module_1
+      dockerfile: Dockerfile.rasa
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./chatbot/Module_1/models:/app/models
+      - ./chatbot/Module_1/endpoints.yml:/app/endpoints.yml
+      - ./chatbot/Module_1/credentials.yml:/app/credentials.yml
+      - ./chatbot/Module_1/config.yml:/app/config.yml
+      - ./chatbot/Module_1/domain.yml:/app/domain.yml
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - bot-network
+    depends_on:
+      - rasa-actions-bot1
+
+  rasa-actions-bot2:
+    build:
+      context: ./chatbot/Module_2
+      dockerfile: Dockerfile.actions
+    ports:
+      - "5056:5056"
+    volumes:
+      - ./chatbot/Module_2/actions:/app/actions
+      - ./chatbot/Module_2/endpoints.yml:/app/endpoints.yml
+      - ./chatbot/Module_2/credentials.yml:/app/credentials.yml
+      - ./chatbot/Module_2/config.yml:/app/config.yml
+      - ./chatbot/Module_2/domain.yml:/app/domain.yml
+    networks:
+      - bot-network  
+
+  rasa-bot2:
+    build:
+      context: ./chatbot/Module_2
+      dockerfile: Dockerfile.rasa
+    ports:
+      - "5006:5006"
+    volumes:
+      - ./chatbot/Module_2/models:/app/models
+      - ./chatbot/Module_2/endpoints.yml:/app/endpoints.yml
+      - ./chatbot/Module_2/credentials.yml:/app/credentials.yml
+      - ./chatbot/Module_2/config.yml:/app/config.yml
+      - ./chatbot/Module_2/domain.yml:/app/domain.yml
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - bot-network
+    depends_on:
+      - rasa-actions-bot2
+
+  rasa-actions-bot3:
+    build:
+      context: ./chatbot/Module_3
+      dockerfile: Dockerfile.actions
+    ports:
+      - "5057:5057"
+    volumes:
+      - ./chatbot/Module_3/actions:/app/actions
+      - ./chatbot/Module_3/endpoints.yml:/app/endpoints.yml
+      - ./chatbot/Module_3/credentials.yml:/app/credentials.yml
+      - ./chatbot/Module_3/config.yml:/app/config.yml
+      - ./chatbot/Module_3/domain.yml:/app/domain.yml  
+    networks:
+      - bot-network
+
+  rasa-bot3:
+    build:
+      context: ./chatbot/Module_3
+      dockerfile: Dockerfile.rasa
+    ports:
+      - "5007:5007"
+    volumes:
+      - ./chatbot/Module_3/models:/app/models
+      - ./chatbot/Module_3/endpoints.yml:/app/endpoints.yml
+      - ./chatbot/Module_3/credentials.yml:/app/credentials.yml
+      - ./chatbot/Module_3/config.yml:/app/config.yml
+      - ./chatbot/Module_3/domain.yml:/app/domain.yml
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - bot-network
+    depends_on:
+      - rasa-actions-bot3
+
+  rasa-actions-bot4:
+    build:
+      context: ./chatbot/Module_4
+      dockerfile: Dockerfile.actions
+    ports:
+      - "5058:5058"
+    volumes:
+      - ./chatbot/Module_4/actions:/app/actions
+      - ./chatbot/Module_4/endpoints.yml:/app/endpoints.yml
+      - ./chatbot/Module_4/credentials.yml:/app/credentials.yml
+      - ./chatbot/Module_4/config.yml:/app/config.yml
+      - ./chatbot/Module_4/domain.yml:/app/domain.yml  
+    networks:
+      - bot-network
+
+  rasa-bot4:
+    build:
+      context: ./chatbot/Module_4
+      dockerfile: Dockerfile.rasa
+    ports:
+      - "5008:5008"
+    volumes:
+      - ./chatbot/Module_4/models:/app/models
+      - ./chatbot/Module_4/endpoints.yml:/app/endpoints.yml
+      - ./chatbot/Module_4/credentials.yml:/app/credentials.yml
+      - ./chatbot/Module_4/config.yml:/app/config.yml
+      - ./chatbot/Module_4/domain.yml:/app/domain.yml
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - bot-network
+    depends_on:
+      - rasa-actions-bot4
+
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    environment:
+      - PYTHONPATH=.. 
+    command: python run.py
+    networks:
+      - bot-network
+    depends_on:
+      - rasa-bot1
+      - rasa-bot2
+      - rasa-bot3
+      - rasa-bot4
+
+networks:
+  bot-network:
+    driver: bridge
